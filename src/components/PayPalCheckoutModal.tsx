@@ -4,10 +4,17 @@ import {
   Sparkles, Check, AlertCircle, 
   ExternalLink, Key, Zap, CheckCircle, RefreshCw,
   MessageCircle, Copy, Send, HelpCircle, Phone, Mail, User, CreditCard, Tag, Globe,
-  Terminal, ShieldAlert, CheckCircle as CheckIcon, Clock, Trash2, ArrowRight, ArrowLeft
+  Terminal, ShieldAlert, CheckCircle as CheckIcon, Clock, Trash2, ArrowRight, ArrowLeft,
+  Coins
 } from 'lucide-react';
 import { ThemeLanguage } from '../types';
 import { t } from '../utils/translations';
+import { 
+  CountryCurrencyConfig, 
+  COUNTRIES_CONFIG, 
+  detectUserCountry, 
+  formatLocalPrice 
+} from '../utils/currencyUtils';
 
 interface GeneratedCodeItem {
   code: string;
@@ -45,13 +52,16 @@ export const PayPalCheckoutModal: React.FC<Props> = ({
   const [showSellerTab, setShowSellerTab] = useState(false);
   const [secretClickCount, setSecretClickCount] = useState(0);
   
+  // Country & Currency State (Auto-Detected & Customizable)
+  const [selectedCountry, setSelectedCountry] = useState<CountryCurrencyConfig>(() => detectUserCountry());
+
   // WhatsApp Form State
   const [buyerName, setBuyerName] = useState('');
   const [buyerPhone, setBuyerPhone] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
   const [selectedPackage, setSelectedPackage] = useState<'blogger' | 'wordpress' | 'both'>(themeType);
-  const [paymentMethod, setPaymentMethod] = useState('baridimob');
-  const [country, setCountry] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState(() => selectedCountry.defaultPaymentMethod);
+  const [country, setCountry] = useState(() => isEn ? selectedCountry.nameEn : selectedCountry.nameAr);
   const [buyerNotes, setBuyerNotes] = useState('');
   const [copiedMessage, setCopiedMessage] = useState(false);
   const [orderSent, setOrderSent] = useState(false);
@@ -94,6 +104,10 @@ export const PayPalCheckoutModal: React.FC<Props> = ({
 
   useEffect(() => {
     if (isOpen) {
+      const detected = detectUserCountry();
+      setSelectedCountry(detected);
+      setCountry(isEn ? detected.nameEn : detected.nameAr);
+      setPaymentMethod(detected.defaultPaymentMethod);
       setSelectedPackage(themeType);
       setSellerPackageChoice(themeType);
       setErrorMessage('');
@@ -101,7 +115,19 @@ export const PayPalCheckoutModal: React.FC<Props> = ({
       setOrderSent(false);
       loadCodeLedger();
     }
-  }, [isOpen, themeType]);
+  }, [isOpen, themeType, isEn]);
+
+  const handleCountryChange = (cCode: string) => {
+    const cConfig = COUNTRIES_CONFIG[cCode] || COUNTRIES_CONFIG.US;
+    setSelectedCountry(cConfig);
+    setCountry(isEn ? cConfig.nameEn : cConfig.nameAr);
+    setPaymentMethod(cConfig.defaultPaymentMethod);
+    try {
+      localStorage.setItem('technoapp_user_country', cConfig.countryCode);
+    } catch {
+      // ignore
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -114,6 +140,13 @@ export const PayPalCheckoutModal: React.FC<Props> = ({
   const activePrice = getPackagePrice(selectedPackage);
   const sellerPkgPrice = getPackagePrice(sellerPackageChoice);
 
+  // Localized price calculations based on country & parallel market exchange rate
+  const localPriceObj = formatLocalPrice(activePrice, selectedCountry, isEn);
+  const bloggerLocalPrice = formatLocalPrice(4.99, selectedCountry, isEn);
+  const wpLocalPrice = formatLocalPrice(4.99, selectedCountry, isEn);
+  const bundleLocalPrice = formatLocalPrice(9.99, selectedCountry, isEn);
+  const sellerLocalPriceObj = formatLocalPrice(sellerPkgPrice, selectedCountry, isEn);
+
   const packageNameText = isEn
     ? (selectedPackage === 'wordpress' ? 'TechnoApp Pro WordPress Theme' : selectedPackage === 'blogger' ? 'TechnoApp Pro Blogger XML' : 'TechnoApp Pro Full Bundle (Blogger + WP)')
     : (selectedPackage === 'wordpress' ? 'قالب ووردبريس الاحترافي (TechnoApp WP)' : selectedPackage === 'blogger' ? 'قالب بلوجر التقني المطور (TechnoApp XML)' : 'حزمة القالبين معاً (Blogger + WordPress)');
@@ -123,8 +156,8 @@ export const PayPalCheckoutModal: React.FC<Props> = ({
   // 1. WhatsApp Order Submission
   const generateWhatsAppMessage = () => {
     const paymentMethodMap: Record<string, string> = {
-      baridimob: isEn ? 'Algerian BaridiMob / CCP' : 'بريدي موب / CCP (الجزائر)',
-      vodafone: isEn ? 'Vodafone Cash / InstaPay (Egypt)' : 'فودافون كاش / إنستاباي (مصر)',
+      baridimob: isEn ? 'Algerian BaridiMob / CCP / Algérie Poste' : 'بريدي موب / CCP (الجزائر)',
+      vodafone: isEn ? 'Vodafone Cash / InstaPay (Egypt)' : 'فودافون كاش / إنستاباي InstaPay (مصر)',
       stcpay: isEn ? 'STC Pay / Bank Transfer (KSA & Gulf)' : 'STC Pay / تحويل بنكي (السعودية والخليج)',
       zaincash: isEn ? 'Zain Cash / AsiaHawala (Iraq)' : 'زين كاش / آسيا حوالة (العراق)',
       usdt: isEn ? 'USDT / Binance Pay (TRC20)' : 'USDT / بايننس باي (كريبتو)',
@@ -135,28 +168,30 @@ export const PayPalCheckoutModal: React.FC<Props> = ({
     const chosenPayment = paymentMethodMap[paymentMethod] || paymentMethod;
 
     return isEn 
-      ? `🌟 *Order Request: TechnoApp Pro Theme License ($${activePrice})*
+      ? `🌟 *Order Request: TechnoApp Pro Theme License*
 ━━━━━━━━━━━━━━━━━━━━━━━━
 👤 *Buyer Name:* ${buyerName || 'Not specified'}
 📱 *WhatsApp/Phone:* ${buyerPhone || 'Not specified'}
 📧 *Email:* ${buyerEmail || 'Not specified'}
 📦 *Selected Package:* ${packageNameText}
-💵 *Amount:* $${activePrice} USD
+💵 *Amount to Pay:* ${localPriceObj.amountFormatted} (approx. $${activePrice} USD)
+🏷️ *Rate Note:* ${localPriceObj.explanation}
 💳 *Payment Method:* ${chosenPayment}
-🌍 *Country:* ${country || 'International'}
+🌍 *Country:* ${country || selectedCountry.nameEn}
 📝 *Notes:* ${buyerNotes || 'None'}
 ━━━━━━━━━━━━━━━━━━━━━━━━
 🕒 *Date:* ${new Date().toLocaleDateString('en-US')}
 ⚡ *Hello, I would like to pay for the theme. Please provide transfer details and send my One-Time Activation Code.*`
-      : `🌟 *طلب شراء ترخيص قالب TechnoApp Pro (سعر العرض: $${activePrice})*
+      : `🌟 *طلب شراء ترخيص قالب TechnoApp Pro*
 ━━━━━━━━━━━━━━━━━━━━━━━━
 👤 *اسم المشتري:* ${buyerName || 'غير محدد'}
 📱 *رقم الواتساب/الهاتف:* ${buyerPhone || 'غير محدد'}
 📧 *البريد الإلكتروني:* ${buyerEmail || 'غير محدد'}
 📦 *الحزمة المطلوبة:* ${packageNameText}
-💵 *السعر:* $${activePrice} دولار
+💵 *المبلغ المطلوب:* ${localPriceObj.amountFormatted} (ما يعادل $${activePrice} دولار)
+🏷️ *ملاحظة الصرف:* ${localPriceObj.explanation}
 💳 *طريقة الدفع:* ${chosenPayment}
-🌍 *الدولة:* ${country || 'عام'}
+🌍 *الدولة:* ${country || selectedCountry.nameAr}
 📝 *ملاحظات:* ${buyerNotes || 'لا توجد'}
 ━━━━━━━━━━━━━━━━━━━━━━━━
 🕒 *التاريخ:* ${new Date().toLocaleDateString('ar-EG')}
@@ -415,7 +450,7 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
             <span>{isEn ? 'Official License & Instant Unlock' : 'الترخيص الرسمي والتحميل الفوري'}</span>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <div>
               <h2 className="text-lg sm:text-xl font-black">{isEn ? 'TechnoApp Pro Commercial License' : 'شراء وتفعيل ترخيص قالب TechnoApp Pro'}</h2>
               <p className="text-xs text-emerald-100 mt-0.5">
@@ -423,11 +458,44 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
               </p>
             </div>
             
-            {/* Price Badge */}
-            <div className="text-right bg-slate-950/40 backdrop-blur px-3 py-1.5 rounded-2xl border border-white/20 flex-shrink-0">
-              <span className="text-[10px] text-slate-300 line-through block">${selectedPackage === 'both' ? '19.99' : '9.99'}</span>
-              <span className="text-xl font-black text-amber-300 font-mono">${activePrice} <span className="text-[10px] font-sans">USD</span></span>
+            {/* Price Badge with Local Currency */}
+            <div className="text-right bg-slate-950/60 backdrop-blur px-3.5 py-2 rounded-2xl border border-white/20 flex-shrink-0 shadow-lg">
+              <div className="text-sm sm:text-base font-black text-amber-300 font-sans">
+                {localPriceObj.amountFormatted}
+              </div>
+              <div className="flex items-center justify-end gap-1.5 text-[10px] text-slate-300 font-mono">
+                <span className="line-through text-slate-400">${selectedPackage === 'both' ? '19.99' : '9.99'}</span>
+                <span className="text-emerald-300 font-bold">${activePrice} USD</span>
+              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Global Country & Currency Bar */}
+        <div className="bg-slate-950 px-4 sm:px-6 py-2.5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+            <span className="text-[11px] text-slate-300 font-semibold">
+              {isEn ? 'Detected Country & Currency:' : 'العملة وسعر الصرف حسب بلدك:'}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <select
+              value={selectedCountry.countryCode}
+              onChange={(e) => handleCountryChange(e.target.value)}
+              className="bg-slate-900 border border-slate-700 text-white text-[11px] rounded-xl px-2.5 py-1 font-bold focus:outline-none focus:border-emerald-500 transition cursor-pointer"
+            >
+              {Object.values(COUNTRIES_CONFIG).map((c) => (
+                <option key={c.countryCode} value={c.countryCode} className="bg-slate-900 text-white">
+                  {c.flag} {isEn ? c.nameEn : c.nameAr} ({c.currencyCode} - {c.isParallelMarket ? (isEn ? 'Market Rate' : 'سوق السكوار') : (isEn ? 'Official' : 'رسمي')})
+                </option>
+              ))}
+            </select>
+
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono hidden sm:inline">
+              1$ = {selectedCountry.ratePerUsd} {selectedCountry.currencyCode}
+            </span>
           </div>
         </div>
 
@@ -610,47 +678,68 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
 
                 {/* Package Choice */}
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">
-                    {isEn ? 'Select Template Package' : 'نوع القالب المطلوب'}
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-slate-300 font-bold">
+                      {isEn ? 'Select Template Package' : 'اختر الحزمة المطلوبة'}
+                    </label>
+                    <span className="text-[10px] text-amber-300 font-medium">
+                      {localPriceObj.explanation}
+                    </span>
+                  </div>
+                  
                   <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => setSelectedPackage('blogger')}
-                      className={`p-2.5 rounded-xl border text-center transition ${
+                      className={`p-3 rounded-2xl border text-center transition flex flex-col justify-between ${
                         selectedPackage === 'blogger'
-                          ? 'border-emerald-500 bg-emerald-500/10 text-white font-bold ring-1 ring-emerald-500'
-                          : 'border-slate-800 bg-slate-950 text-slate-400'
+                          ? 'border-emerald-500 bg-emerald-500/15 text-white font-bold ring-2 ring-emerald-500 shadow-md'
+                          : 'border-slate-800 bg-slate-950/80 text-slate-400 hover:border-slate-700'
                       }`}
                     >
-                      <div className="text-xs">Blogger (.xml)</div>
-                      <div className="text-[10px] text-emerald-400 font-mono font-bold">$4.99</div>
+                      <div className="text-xs font-black">Blogger (.xml)</div>
+                      <div className="mt-1">
+                        <div className="text-[11px] text-emerald-400 font-bold font-sans">
+                          {bloggerLocalPrice.amountFormatted}
+                        </div>
+                        <div className="text-[9px] text-slate-400 font-mono">$4.99 USD</div>
+                      </div>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setSelectedPackage('wordpress')}
-                      className={`p-2.5 rounded-xl border text-center transition ${
+                      className={`p-3 rounded-2xl border text-center transition flex flex-col justify-between ${
                         selectedPackage === 'wordpress'
-                          ? 'border-emerald-500 bg-emerald-500/10 text-white font-bold ring-1 ring-emerald-500'
-                          : 'border-slate-800 bg-slate-950 text-slate-400'
+                          ? 'border-emerald-500 bg-emerald-500/15 text-white font-bold ring-2 ring-emerald-500 shadow-md'
+                          : 'border-slate-800 bg-slate-950/80 text-slate-400 hover:border-slate-700'
                       }`}
                     >
-                      <div className="text-xs">WordPress (.zip)</div>
-                      <div className="text-[10px] text-emerald-400 font-mono font-bold">$4.99</div>
+                      <div className="text-xs font-black">WordPress (.zip)</div>
+                      <div className="mt-1">
+                        <div className="text-[11px] text-emerald-400 font-bold font-sans">
+                          {wpLocalPrice.amountFormatted}
+                        </div>
+                        <div className="text-[9px] text-slate-400 font-mono">$4.99 USD</div>
+                      </div>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setSelectedPackage('both')}
-                      className={`p-2.5 rounded-xl border text-center transition ${
+                      className={`p-3 rounded-2xl border text-center transition flex flex-col justify-between ${
                         selectedPackage === 'both'
-                          ? 'border-emerald-500 bg-emerald-500/10 text-white font-bold ring-1 ring-emerald-500'
-                          : 'border-slate-800 bg-slate-950 text-slate-400'
+                          ? 'border-amber-500 bg-amber-500/15 text-white font-bold ring-2 ring-amber-500 shadow-md'
+                          : 'border-slate-800 bg-slate-950/80 text-slate-400 hover:border-slate-700'
                       }`}
                     >
-                      <div className="text-xs">{isEn ? 'Both (Bundle)' : 'الحزمة كاملة'}</div>
-                      <div className="text-[10px] text-amber-300 font-mono font-bold">$9.99</div>
+                      <div className="text-xs font-black text-amber-300">{isEn ? 'Both (Bundle)' : 'الحزمة الشاملة'}</div>
+                      <div className="mt-1">
+                        <div className="text-[11px] text-amber-300 font-bold font-sans">
+                          {bundleLocalPrice.amountFormatted}
+                        </div>
+                        <div className="text-[9px] text-slate-400 font-mono">$9.99 USD</div>
+                      </div>
                     </button>
                   </div>
                 </div>
@@ -663,13 +752,13 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
                   <select
                     value={paymentMethod}
                     onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-emerald-500 font-medium cursor-pointer"
                   >
-                    <option value="baridimob">🇩🇿 بريدي موب / CCP / Algérie Poste (الجزائر)</option>
-                    <option value="vodafone">🇪🇬 فودافون كاش / إنستاباي InstaPay (مصر)</option>
+                    <option value="baridimob">🇩🇿 بريدي موب / CCP / Algérie Poste (الجزائر - 1$ = 240 دج)</option>
+                    <option value="vodafone">🇪🇬 فودافون كاش / إنستاباي InstaPay (مصر - 1$ = 50 ج.م)</option>
                     <option value="stcpay">🇸🇦 STC Pay / تحويل بنكي (السعودية والخليج)</option>
-                    <option value="zaincash">🇮🇶 زين كاش / آسيا حوالة (العراق)</option>
-                    <option value="usdt">🪙 USDT / Binance Pay (العملات الرقمية)</option>
+                    <option value="zaincash">🇮🇶 زين كاش / آسيا حوالة (العراق - 1$ = 1,500 د.ع)</option>
+                    <option value="usdt">🪙 USDT / Binance Pay (العملات الرقمية TRC20/BEP20)</option>
                     <option value="westernunion">🌍 Western Union / MoneyGram</option>
                     <option value="bankwire">💳 تحويل بنكي مباشر / أخرى</option>
                   </select>
@@ -684,7 +773,7 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
                     type="text"
                     value={buyerNotes}
                     onChange={(e) => setBuyerNotes(e.target.value)}
-                    placeholder={isEn ? "e.g. I want help with installation" : "مثال: أرغب بالمساعدة في التثبيت"}
+                    placeholder={isEn ? "e.g. I want help with installation" : "مثال: أرغب بالمساعدة في التثبيت أو الاستفسار"}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-emerald-500"
                   />
                 </div>
@@ -695,10 +784,14 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
                 <button
                   type="button"
                   onClick={handleSendWhatsAppOrder}
-                  className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black rounded-2xl text-xs transition-all transform hover:scale-[1.01] shadow-xl flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-black rounded-2xl text-xs transition-all transform hover:scale-[1.01] shadow-xl flex items-center justify-center gap-2"
                 >
                   <MessageCircle className="w-4 h-4 fill-slate-950" />
-                  <span>{isEn ? `Send Order via WhatsApp ($${activePrice})` : `إرسال الطلب والمتابعة عبر واتساب ($${activePrice})`}</span>
+                  <span>
+                    {isEn 
+                      ? `Send Order via WhatsApp (${localPriceObj.amountFormatted} / $${activePrice})` 
+                      : `إرسال الطلب والمتابعة عبر واتساب (${localPriceObj.amountFormatted} / $${activePrice})`}
+                  </span>
                 </button>
 
                 <div className="flex items-center justify-between text-[11px] px-1 text-slate-400">
@@ -754,40 +847,49 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
                       <button
                         type="button"
                         onClick={() => setSelectedPackage('blogger')}
-                        className={`p-2.5 rounded-xl border text-center transition ${
+                        className={`p-3 rounded-2xl border text-center transition flex flex-col justify-between ${
                           selectedPackage === 'blogger'
-                            ? 'border-cyan-500 bg-cyan-500/10 text-white font-bold ring-1 ring-cyan-500'
-                            : 'border-slate-800 bg-slate-950 text-slate-400'
+                            ? 'border-cyan-500 bg-cyan-500/15 text-white font-bold ring-2 ring-cyan-500 shadow-md'
+                            : 'border-slate-800 bg-slate-950/80 text-slate-400 hover:border-slate-700'
                         }`}
                       >
-                        <div className="text-xs">Blogger XML</div>
-                        <div className="text-[10px] text-cyan-400 font-mono font-bold">$4.99</div>
+                        <div className="text-xs font-black">Blogger XML</div>
+                        <div className="mt-1">
+                          <div className="text-[11px] text-cyan-400 font-mono font-bold">$4.99 USD</div>
+                          <div className="text-[9px] text-slate-400 font-sans">{bloggerLocalPrice.amountFormatted}</div>
+                        </div>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => setSelectedPackage('wordpress')}
-                        className={`p-2.5 rounded-xl border text-center transition ${
+                        className={`p-3 rounded-2xl border text-center transition flex flex-col justify-between ${
                           selectedPackage === 'wordpress'
-                            ? 'border-cyan-500 bg-cyan-500/10 text-white font-bold ring-1 ring-cyan-500'
-                            : 'border-slate-800 bg-slate-950 text-slate-400'
+                            ? 'border-cyan-500 bg-cyan-500/15 text-white font-bold ring-2 ring-cyan-500 shadow-md'
+                            : 'border-slate-800 bg-slate-950/80 text-slate-400 hover:border-slate-700'
                         }`}
                       >
-                        <div className="text-xs">WordPress ZIP</div>
-                        <div className="text-[10px] text-cyan-400 font-mono font-bold">$4.99</div>
+                        <div className="text-xs font-black">WordPress ZIP</div>
+                        <div className="mt-1">
+                          <div className="text-[11px] text-cyan-400 font-mono font-bold">$4.99 USD</div>
+                          <div className="text-[9px] text-slate-400 font-sans">{wpLocalPrice.amountFormatted}</div>
+                        </div>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => setSelectedPackage('both')}
-                        className={`p-2.5 rounded-xl border text-center transition ${
+                        className={`p-3 rounded-2xl border text-center transition flex flex-col justify-between ${
                           selectedPackage === 'both'
-                            ? 'border-cyan-500 bg-cyan-500/10 text-white font-bold ring-1 ring-cyan-500'
-                            : 'border-slate-800 bg-slate-950 text-slate-400'
+                            ? 'border-amber-500 bg-amber-500/15 text-white font-bold ring-2 ring-amber-500 shadow-md'
+                            : 'border-slate-800 bg-slate-950/80 text-slate-400 hover:border-slate-700'
                         }`}
                       >
-                        <div className="text-xs">{isEn ? 'Full Bundle' : 'الحزمة كاملة'}</div>
-                        <div className="text-[10px] text-amber-300 font-mono font-bold">$9.99</div>
+                        <div className="text-xs font-black text-amber-300">{isEn ? 'Full Bundle' : 'الحزمة كاملة'}</div>
+                        <div className="mt-1">
+                          <div className="text-[11px] text-amber-300 font-mono font-bold">$9.99 USD</div>
+                          <div className="text-[9px] text-slate-400 font-sans">{bundleLocalPrice.amountFormatted}</div>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -795,7 +897,10 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
                   <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
                     <div>
                       <span className="text-[11px] text-slate-400 block">{isEn ? 'Special Price (Lifetime)' : 'سعر العرض الرسمي (مدى الحياة)'}</span>
-                      <span className="text-2xl font-black text-cyan-400 font-mono">${activePrice} <span className="text-xs text-slate-400">USD</span></span>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-2xl font-black text-cyan-400 font-mono">${activePrice} <span className="text-xs text-slate-400">USD</span></span>
+                        <span className="text-xs text-amber-300 font-semibold font-sans">({localPriceObj.amountFormatted})</span>
+                      </div>
                     </div>
                     <div className="text-right space-y-1 text-[11px]">
                       <div className="flex items-center gap-1 text-slate-300 font-semibold">
@@ -804,7 +909,7 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
                       </div>
                       <div className="flex items-center gap-1 text-slate-300 font-semibold">
                         <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
-                        <span>{isEn ? 'Lifetime Free Updates' : 'تحديثات مستمرة'}</span>
+                        <span>{isEn ? 'Instant License Unlock' : 'تفعيل وتحميل فوري'}</span>
                       </div>
                     </div>
                   </div>
