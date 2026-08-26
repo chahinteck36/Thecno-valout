@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  --theme-primary: #06b6d4;
+  --theme-primary-hover: #0891b2;
+  --theme-primary-glow: rgba(6, 182, 212, 0.25);
+  --theme-badge-bg: rgba(6, 182, 212, 0.12);
+  --theme-badge-text: #06b6d4;
+  --theme-gradient: linear-gradient(135deg, #06b6d4 0%, #2563eb 100%);
+  --theme-font: 'Cairo', system-ui, -apple-system, sans-serif;
+}
+
+/* Dynamic Theme Utilities that respond to user customization */
+.theme-dynamic-font {
+  font-family: var(--theme-font) !important;
+}
+
+.theme-bg-primary {
+  background-color: var(--theme-primary) !important;
+}
+
+.theme-bg-primary:hover {
+  background-color: var(--theme-primary-hover) !important;
+}
+
+.theme-text-primary {
+  color: var(--theme-primary) !important;
+}
+
+.theme-border-primary {
+  border-color: var(--theme-primary) !important;
+}
+
+.theme-gradient-bg {
+  background: var(--theme-gradient) !important;
+}
+
+.theme-badge-pill {
+  background-color: var(--theme-badge-bg) !important;
+  color: var(--theme-badge-text) !important;
+  border-color: var(--theme-badge-bg) !important;
+}
+
+.theme-glow-shadow {
+  box-shadow: 0 8px 24px -4px var(--theme-primary-glow) !important;
+}

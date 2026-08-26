@@ -1,0 +1,6 @@
+{
+  "name": "Blogger Tech & Apps Pro Theme Studio",
+  "description": "استوديو قوالب التطبيقات والبرامج المتكامل لبلوجر وووردبريس (Blogger XML & WordPress Theme) مع معاينة حية وتوليد الأكواد وحزم ZIP والوضع الليلي ومؤقت التحميل التنازلي.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
