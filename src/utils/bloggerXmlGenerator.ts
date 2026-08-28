@@ -30,6 +30,7 @@ export function generateBloggerXml(config: ThemeConfig): string {
   <b:include data='blog' name='all-head-content'/>
 
   <!-- SEO Canonical & Meta Optimization -->
+  <meta content='ca-pub-9787537851833974' name='google-adsense-account'/>
   <link expr:href='data:blog.canonicalUrl' rel='canonical'/>
   <b:if cond='data:blog.metaDescription != ""'>
     <meta expr:content='data:blog.metaDescription' name='description'/>
