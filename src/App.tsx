@@ -18,8 +18,14 @@ export default function App() {
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
   const [deviceMode, setDeviceMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
 
-  // Payment State
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  // Payment & License State with LocalStorage Persistence
+  const [isUnlocked, setIsUnlocked] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('technoapp_licensed') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [pendingDownloadType, setPendingDownloadType] = useState<'blogger' | 'wordpress'>('blogger');
 
@@ -34,6 +40,7 @@ export default function App() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   // Actual execution of WordPress ZIP download (Clean Raw WordPress Theme ZIP)
@@ -47,9 +54,20 @@ export default function App() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (err) {
       console.error('Error creating WordPress ZIP:', err);
     }
+  };
+
+  // Demo content XML download execution
+  const executeDemoContentDownload = () => {
+    const link = document.createElement('a');
+    link.href = '/blogger-demo-content.xml';
+    link.setAttribute('download', 'blogger-demo-content.xml');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // Quick download theme.xml (Blogger) - Intercepted with PayPal Checkout
@@ -128,6 +146,7 @@ export default function App() {
         {activeTab === 'guide' && (
           <InstallGuide
             onGoToPreview={() => setActiveTab('preview')}
+            onDownloadDemoContent={executeDemoContentDownload}
             onDownloadWpZip={handleQuickDownloadWpZip}
             onDownloadXml={handleQuickDownloadXml}
             language={themeConfig.language}
