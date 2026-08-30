@@ -44,20 +44,20 @@ export const Header: React.FC<Props> = ({
         <div className="flex items-center justify-between h-16 sm:h-20 gap-3">
           
           {/* Brand Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-teal-500 to-blue-600 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-cyan-500/25">
-              <span className="text-xl">⚡</span>
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-teal-500 to-blue-600 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-cyan-500/25 overflow-hidden border border-white/10">
+              <img src="/favicon.png" alt="TechnoApp Logo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-black text-base sm:text-lg text-white tracking-tight">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="font-black text-sm sm:text-lg text-white tracking-tight">
                   {t('studioTitle', config.language)}
                 </span>
-                <span className="px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[10px] font-black hidden sm:inline">
+                <span className="px-1.5 sm:px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[9px] sm:text-[10px] font-black hidden md:inline">
                   {t('studioBadge', config.language)}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 hidden sm:block">
+              <p className="text-[10px] sm:text-[11px] text-slate-400 hidden sm:block">
                 {t('studioSubtitle', config.language)}
               </p>
             </div>

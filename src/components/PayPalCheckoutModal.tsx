@@ -415,9 +415,9 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in overflow-y-auto" dir={isEn ? 'ltr' : 'rtl'}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in overflow-y-auto" dir={isEn ? 'ltr' : 'rtl'}>
       <div 
-        className="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden relative my-auto"
+        className="bg-slate-900 border border-slate-800 w-full max-w-2xl max-h-[92vh] flex flex-col rounded-3xl shadow-2xl overflow-hidden relative my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header Ribbon */}
@@ -577,7 +577,7 @@ Thank you for your purchase! Support is available anytime on this WhatsApp.`
         </div>
 
         {/* Modal Content */}
-        <div className="p-4 sm:p-6 space-y-4 text-slate-200 text-xs max-h-[70vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 space-y-4 text-slate-200 text-xs flex-1 overflow-y-auto">
           
           {/* Notifications */}
           {errorMessage && (
