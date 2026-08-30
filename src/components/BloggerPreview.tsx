@@ -85,10 +85,10 @@ export const BloggerPreview: React.FC<Props> = ({
       
       {/* Device Viewport Selector Toolbar (only if not hidden) */}
       {!hideInnerToolbar && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-md">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-400">
-              {isEn ? 'Responsive Preview:' : 'معاينة استجابة القالب:'}
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 flex flex-wrap items-center justify-between gap-2.5 shadow-md">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[11px] sm:text-xs font-bold text-slate-400">
+              {isEn ? 'Preview Mode:' : 'المعاينة:'}
             </span>
             <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
               <button
@@ -97,13 +97,13 @@ export const BloggerPreview: React.FC<Props> = ({
                   backgroundColor: deviceMode === 'desktop' ? activeTheme.hex : undefined,
                   color: deviceMode === 'desktop' ? '#020617' : undefined,
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition ${
                   deviceMode === 'desktop' ? 'shadow' : 'text-slate-400 hover:text-white'
                 }`}
                 title={isEn ? 'Desktop View' : 'شاشة كمبيوتر'}
               >
                 <Monitor className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{isEn ? 'Desktop' : 'كمبيوتر (Desktop)'}</span>
+                <span className="hidden sm:inline">{isEn ? 'Desktop' : 'كمبيوتر'}</span>
               </button>
               <button
                 onClick={() => setDeviceMode('tablet')}
@@ -111,13 +111,13 @@ export const BloggerPreview: React.FC<Props> = ({
                   backgroundColor: deviceMode === 'tablet' ? activeTheme.hex : undefined,
                   color: deviceMode === 'tablet' ? '#020617' : undefined,
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition ${
                   deviceMode === 'tablet' ? 'shadow' : 'text-slate-400 hover:text-white'
                 }`}
                 title={isEn ? 'Tablet View' : 'جهاز لوحي'}
               >
                 <Tablet className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{isEn ? 'Tablet' : 'تابلت (Tablet)'}</span>
+                <span className="hidden sm:inline">{isEn ? 'Tablet' : 'تابلت'}</span>
               </button>
               <button
                 onClick={() => setDeviceMode('mobile')}
@@ -125,30 +125,29 @@ export const BloggerPreview: React.FC<Props> = ({
                   backgroundColor: deviceMode === 'mobile' ? activeTheme.hex : undefined,
                   color: deviceMode === 'mobile' ? '#020617' : undefined,
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition ${
                   deviceMode === 'mobile' ? 'shadow' : 'text-slate-400 hover:text-white'
                 }`}
                 title={isEn ? 'Mobile View' : 'هاتف ذكي'}
               >
                 <Smartphone className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">{isEn ? 'Mobile' : 'هاتف (Mobile)'}</span>
+                <span className="hidden sm:inline">{isEn ? 'Mobile' : 'هاتف'}</span>
               </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-xs">
-            <span className="text-slate-400 font-medium">{isEn ? 'Theme Mode:' : 'الوضع الحالي:'}</span>
+          <div className="flex items-center gap-2 text-xs">
             <button
               onClick={onToggleDark}
-              className={`px-3 py-1.5 rounded-lg font-bold border transition ${
+              className={`px-2.5 sm:px-3 py-1.5 rounded-lg font-bold border transition text-[11px] sm:text-xs ${
                 isDark 
                   ? 'bg-slate-800 border-slate-700 text-amber-400' 
                   : 'bg-slate-100 border-slate-300 text-slate-800'
               }`}
             >
               {isDark 
-                ? (isEn ? '🌙 Dark Mode' : '🌙 الوضع الليلي (Dark)') 
-                : (isEn ? '☀️ Light Mode' : '☀️ الوضع النهاري (Light)')}
+                ? (isEn ? '🌙 Dark' : '🌙 ليلي') 
+                : (isEn ? '☀️ Light' : '☀️ نهاري')}
             </button>
           </div>
         </div>
@@ -156,7 +155,7 @@ export const BloggerPreview: React.FC<Props> = ({
 
       {/* Frame Container */}
       <div className={`transition-all duration-300 ${containerWidthClass}`}>
-        <div className={`rounded-2xl overflow-hidden border min-h-[800px] flex flex-col transition-colors duration-300 ${
+        <div className={`rounded-2xl sm:rounded-3xl overflow-hidden border min-h-[700px] flex flex-col transition-colors duration-300 ${
           isDark ? 'bg-[#0b0f19] border-slate-800 text-slate-100' : 'bg-slate-50 border-slate-200 text-slate-900'
         }`}>
           
@@ -183,18 +182,18 @@ export const BloggerPreview: React.FC<Props> = ({
 
           {/* Breaking News Ticker Bar */}
           {config.enableBreakingTicker && !activePost && !activeStaticPage && (
-            <div className={`border-b py-2.5 px-4 sm:px-6 transition-colors ${
+            <div className={`border-b py-2 px-3 sm:px-6 transition-colors ${
               isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-white border-slate-200'
             }`}>
-              <div className="max-w-7xl mx-auto flex items-center gap-3 text-xs">
+              <div className="max-w-7xl mx-auto flex items-center gap-2 sm:gap-3 text-xs">
                 <span 
-                  className="px-2.5 py-1 rounded-md text-slate-950 font-black flex items-center gap-1.5 flex-shrink-0"
+                  className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-slate-950 font-black flex items-center gap-1 sm:gap-1.5 flex-shrink-0 text-[10px] sm:text-xs"
                   style={{ background: activeTheme.gradient }}
                 >
                   <Zap className="w-3 h-3 fill-current" />
                   <span>{t('exclusiveUpdates', config.language)}:</span>
                 </span>
-                <span className="truncate text-slate-400 font-medium">
+                <span className="truncate text-slate-400 font-medium text-[11px] sm:text-xs">
                   {t('tickerText', config.language)}
                 </span>
               </div>
@@ -202,7 +201,7 @@ export const BloggerPreview: React.FC<Props> = ({
           )}
 
           {/* Main Layout Area */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full flex-1">
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8 w-full flex-1">
             
             {/* 1. Static Page View (About, Privacy, Contact, Disclaimer) */}
             {activeStaticPage ? (
@@ -225,25 +224,25 @@ export const BloggerPreview: React.FC<Props> = ({
               />
             ) : (
               /* 3. Homepage & Category Archive View */
-              <div className="space-y-8">
+              <div className="space-y-6 sm:space-y-8">
                 
                 {/* Hero Featured Grid (Only when on home and not searching) */}
                 {!activeCategorySlug && !searchQuery && featuredPosts.length > 0 && (
-                  <div className="space-y-4">
+                  <div className="space-y-3 sm:space-y-4">
                     <div className="flex items-center justify-between">
                       <h2 
-                        className="text-base sm:text-lg font-black flex items-center gap-2"
+                        className="text-sm sm:text-lg font-black flex items-center gap-1.5 sm:gap-2"
                         style={{ color: activeTheme.hex }}
                       >
-                        <Flame className="w-5 h-5 text-amber-400 fill-amber-400" />
+                        <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 fill-amber-400" />
                         <span>{t('featuredTitle', config.language)}</span>
                       </h2>
-                      <span className="text-xs text-slate-400 font-semibold">
+                      <span className="text-[11px] sm:text-xs text-slate-400 font-semibold">
                         {isEn ? '2026 Verified Releases' : 'تحديثات 2026 الحصرية'}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
                       {featuredPosts.slice(0, 3).map((app) => {
                         const displayTitle = isEn ? (app.titleEn || app.title) : app.title;
                         const displayCategory = isEn ? (app.categoryEn || app.category) : app.category;
@@ -251,7 +250,7 @@ export const BloggerPreview: React.FC<Props> = ({
                           <div
                             key={app.id}
                             onClick={() => onSelectPost(app)}
-                            className="group cursor-pointer rounded-2xl overflow-hidden relative border border-slate-800 bg-slate-900 h-56 flex flex-col justify-end p-5 shadow-lg transition-all hover:scale-[1.02]"
+                            className="group cursor-pointer rounded-2xl overflow-hidden relative border border-slate-800 bg-slate-900 h-44 sm:h-56 flex flex-col justify-end p-4 sm:p-5 shadow-lg transition-all hover:scale-[1.02]"
                           >
                             <img 
                               src={app.coverImage || app.iconUrl} 
@@ -260,17 +259,17 @@ export const BloggerPreview: React.FC<Props> = ({
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
 
-                            <div className="relative z-10 space-y-2">
+                            <div className="relative z-10 space-y-1.5 sm:space-y-2">
                               <span 
-                                className="text-[10px] font-black px-2.5 py-0.5 rounded-full text-slate-950 inline-block"
+                                className="text-[9px] sm:text-[10px] font-black px-2 sm:px-2.5 py-0.5 rounded-full text-slate-950 inline-block"
                                 style={{ backgroundColor: activeTheme.hex }}
                               >
                                 {displayCategory}
                               </span>
-                              <h3 className="font-black text-sm text-white line-clamp-2 leading-snug transition-colors">
+                              <h3 className="font-black text-xs sm:text-sm text-white line-clamp-2 leading-snug transition-colors">
                                 {displayTitle}
                               </h3>
-                              <div className="flex items-center justify-between text-[11px] text-slate-300 pt-1">
+                              <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-300 pt-0.5 sm:pt-1">
                                 <span>{app.version}</span>
                                 <span className="font-bold flex items-center gap-1" style={{ color: activeTheme.hex }}>
                                   <Download className="w-3 h-3" />
@@ -286,14 +285,14 @@ export const BloggerPreview: React.FC<Props> = ({
                 )}
 
                 {/* Category Filter Pills Bar */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+                <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-2 scrollbar-none">
                   <button
                     onClick={() => setActiveCategorySlug(null)}
                     style={{
                       backgroundColor: activeCategorySlug === null ? activeTheme.hex : undefined,
                       color: activeCategorySlug === null ? '#020617' : undefined,
                     }}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 ${
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition flex-shrink-0 ${
                       activeCategorySlug === null
                         ? 'font-black shadow-md'
                         : isDark
@@ -315,7 +314,7 @@ export const BloggerPreview: React.FC<Props> = ({
                           backgroundColor: isCurrent ? activeTheme.hex : undefined,
                           color: isCurrent ? '#020617' : undefined,
                         }}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0 ${
+                        className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition flex-shrink-0 ${
                           isCurrent
                             ? 'font-black shadow-md'
                             : isDark
@@ -330,12 +329,12 @@ export const BloggerPreview: React.FC<Props> = ({
                 </div>
 
                 {/* Main Content Grid with Sidebar */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
                   
                   {/* Apps Grid (2 Cols on Desktop) */}
-                  <div className="lg:col-span-2 space-y-6">
+                  <div className="lg:col-span-2 space-y-4 sm:space-y-6">
                     <div className="flex items-center justify-between">
-                      <h2 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
+                      <h2 className="text-sm sm:text-lg font-black text-white flex items-center gap-2">
                         <span>{t('appsList', config.language)}</span>
                         <span className="text-xs px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 font-normal">
                           {filteredPosts.length} {isEn ? 'apps' : 'منشور'}
@@ -344,7 +343,7 @@ export const BloggerPreview: React.FC<Props> = ({
                     </div>
 
                     {filteredPosts.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         {filteredPosts.map((post) => (
                           <BloggerAppCard
                             key={post.id}
@@ -356,7 +355,7 @@ export const BloggerPreview: React.FC<Props> = ({
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-16 bg-slate-900/50 rounded-2xl border border-slate-800 space-y-3">
+                      <div className="text-center py-12 sm:py-16 bg-slate-900/50 rounded-2xl border border-slate-800 space-y-3">
                         <div className="text-3xl">🔍</div>
                         <h3 className="font-bold text-white text-base">{t('noResults', config.language)}</h3>
                         <p className="text-xs text-slate-400">{t('tryOtherKeywords', config.language)}</p>

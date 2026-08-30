@@ -138,17 +138,17 @@ export const BloggerPostView: React.FC<Props> = ({
       </div>
 
       {/* Post Article Card */}
-      <article className={`rounded-3xl border p-6 sm:p-8 ${
+      <article className={`rounded-2xl sm:rounded-3xl border p-4 sm:p-8 ${
         isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900 shadow-sm'
       }`}>
         
         {/* Post Title */}
-        <h1 className="text-xl sm:text-3xl font-black leading-snug mb-4">
+        <h1 className="text-lg sm:text-2xl md:text-3xl font-black leading-snug mb-4">
           {displayTitle}
         </h1>
 
         {/* Post Meta Data Bar */}
-        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pb-6 border-b border-slate-800/80 mb-6">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs text-slate-400 pb-4 sm:pb-6 border-b border-slate-800/80 mb-6">
           <div className="flex items-center gap-1.5">
             <User className="w-3.5 h-3.5" style={{ color: activeTheme.hex }} />
             <span>{t('author', config.language)}: <strong className="text-slate-200">{post.developer}</strong></span>
@@ -176,13 +176,13 @@ export const BloggerPostView: React.FC<Props> = ({
         )}
 
         {/* Quick App Header Box */}
-        <div className={`p-5 rounded-2xl border flex flex-col sm:flex-row items-center gap-5 mb-8 ${
+        <div className={`p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row items-center gap-4 sm:gap-5 mb-6 sm:mb-8 ${
           isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-slate-50 border-slate-200'
         }`}>
           <img 
             src={post.iconUrl} 
             alt={displayTitle} 
-            className="w-24 h-24 rounded-3xl object-cover shadow-xl border border-slate-700 bg-slate-800"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl object-cover shadow-xl border border-slate-700 bg-slate-800 flex-shrink-0"
           />
           <div className={`space-y-2 text-center ${isEn ? 'sm:text-left' : 'sm:text-right'} flex-1`}>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
@@ -207,7 +207,7 @@ export const BloggerPostView: React.FC<Props> = ({
               backgroundColor: activeTheme.hex,
               boxShadow: `0 6px 20px ${activeTheme.glowHex}`,
             }}
-            className="px-6 py-3.5 rounded-2xl text-slate-950 font-black text-sm transition-transform hover:scale-105 flex items-center gap-2 flex-shrink-0"
+            className="w-full sm:w-auto px-6 py-3 rounded-2xl text-slate-950 font-black text-sm transition-transform hover:scale-105 flex items-center justify-center gap-2 flex-shrink-0"
           >
             <Download className="w-4 h-4 stroke-[2.5]" />
             <span>{t('directDownloadBtn', config.language)}</span>
@@ -322,14 +322,14 @@ export const BloggerPostView: React.FC<Props> = ({
 
             {/* Active Direct Link Button when Timer Finishes or Timer Disabled */}
             {(!isTimerActive || timerCount === 0) && (
-              <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center gap-2.5 sm:gap-3 pt-2 w-full max-w-xl mx-auto">
                 <button
                   onClick={() => window.open(post.downloadLinks.direct, '_blank')}
                   style={{
                     backgroundColor: activeTheme.hex,
                     boxShadow: `0 6px 22px ${activeTheme.glowHex}`,
                   }}
-                  className="px-8 py-3.5 rounded-2xl text-slate-950 font-black text-sm transition-transform hover:scale-105 flex items-center gap-2 shadow-lg"
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3.5 rounded-2xl text-slate-950 font-black text-sm transition-transform hover:scale-105 flex items-center justify-center gap-2 shadow-lg"
                 >
                   <Download className="w-4 h-4 stroke-[2.5]" />
                   <span>{t('directDownloadBtn', config.language)} ({post.size})</span>
@@ -338,7 +338,7 @@ export const BloggerPostView: React.FC<Props> = ({
                 {post.downloadLinks.mirror1 && (
                   <button
                     onClick={() => handleStartDownload(post.downloadLinks.mirror1!)}
-                    className="px-5 py-3.5 rounded-2xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition flex items-center gap-2"
+                    className="w-full sm:w-auto px-4 sm:px-5 py-3 rounded-2xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition flex items-center justify-center gap-2"
                   >
                     <ExternalLink className="w-3.5 h-3.5 text-blue-400" />
                     <span>Mediafire Mirror</span>
@@ -348,7 +348,7 @@ export const BloggerPostView: React.FC<Props> = ({
                 {post.downloadLinks.mirror2 && (
                   <button
                     onClick={() => handleStartDownload(post.downloadLinks.mirror2!)}
-                    className="px-5 py-3.5 rounded-2xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition flex items-center gap-2"
+                    className="w-full sm:w-auto px-4 sm:px-5 py-3 rounded-2xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition flex items-center justify-center gap-2"
                   >
                     <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
                     <span>Google Drive Mirror</span>
@@ -359,7 +359,7 @@ export const BloggerPostView: React.FC<Props> = ({
                   href={config.telegramChannelUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="px-5 py-3.5 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs transition flex items-center gap-2"
+                  className="w-full sm:w-auto px-4 sm:px-5 py-3 rounded-2xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs transition flex items-center justify-center gap-2"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>{t('telegramDownload', config.language)}</span>

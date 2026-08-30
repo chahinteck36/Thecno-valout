@@ -104,7 +104,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500 selection:text-slate-950 overflow-x-hidden">
       
       {/* Main Studio Header */}
       <Header
@@ -126,7 +126,7 @@ export default function App() {
       />
 
       {/* Main Studio Viewport */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-6 py-6">
+      <main className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 py-3 sm:py-6">
         
         {activeTab === 'preview' && (
           <BloggerPreview

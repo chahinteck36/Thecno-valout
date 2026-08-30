@@ -157,16 +157,16 @@ export const BloggerNavbar: React.FC<Props> = ({
       </div>
 
       {/* Main Navbar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6">
+        <div className="flex items-center justify-between h-15 sm:h-20 gap-2 sm:gap-4">
           
           {/* Logo */}
           <div 
             onClick={onGoHome}
-            className="flex items-center gap-3 cursor-pointer group flex-shrink-0"
+            className="flex items-center gap-2 sm:gap-3 cursor-pointer group min-w-0 flex-shrink"
           >
             {config.logoUrl ? (
-              <div className="h-10 sm:h-12 max-w-[160px] sm:max-w-[200px] flex items-center justify-center">
+              <div className="h-9 sm:h-12 max-w-[130px] sm:max-w-[200px] flex items-center justify-center flex-shrink-0">
                 <img 
                   src={config.logoUrl} 
                   alt={config.siteName} 
@@ -176,18 +176,18 @@ export const BloggerNavbar: React.FC<Props> = ({
               </div>
             ) : (
               <div 
-                className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl text-white flex items-center justify-center font-black shadow-md group-hover:scale-105 transition-transform"
+                className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl text-white flex items-center justify-center font-black shadow-md group-hover:scale-105 transition-transform flex-shrink-0"
                 style={{ background: activeTheme.gradient }}
               >
-                <span className="text-xl">⚡</span>
+                <span className="text-lg sm:text-xl">⚡</span>
               </div>
             )}
             
-            <div>
-              <div className="font-black text-lg sm:text-xl tracking-tight flex items-center gap-1">
-                <span>{config.siteName.split('|')[0] || config.siteName}</span>
+            <div className="min-w-0">
+              <div className="font-black text-sm sm:text-xl tracking-tight flex items-center gap-1">
+                <span className="truncate">{config.siteName.split('|')[0] || config.siteName}</span>
                 <span 
-                  className="text-xs px-1.5 py-0.5 rounded font-bold"
+                  className="text-[10px] sm:text-xs px-1.5 py-0.5 rounded font-bold flex-shrink-0"
                   style={{
                     backgroundColor: `${activeTheme.hex}22`,
                     color: activeTheme.hex,
@@ -196,7 +196,7 @@ export const BloggerNavbar: React.FC<Props> = ({
                   PRO
                 </span>
               </div>
-              <div className="text-[10px] text-slate-400 font-medium hidden sm:block">
+              <div className="text-[10px] text-slate-400 font-medium hidden sm:block truncate">
                 {config.siteDescription || (isEn ? 'Premium Tech Apps & Software Hub' : 'منصة التطبيقات والبرامج التقنية')}
               </div>
             </div>
@@ -233,8 +233,8 @@ export const BloggerNavbar: React.FC<Props> = ({
             })}
           </nav>
 
-          {/* Actions: Search, Dark Mode, Telegram */}
-          <div className="flex items-center gap-2">
+          {/* Actions: Search, Dark Mode, Telegram, Menu */}
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             
             {/* Search Input on Desktop */}
             <div className="relative hidden md:block w-48 lg:w-60">
@@ -258,24 +258,26 @@ export const BloggerNavbar: React.FC<Props> = ({
             {/* Mobile Search Toggle */}
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className={`p-2.5 rounded-xl border md:hidden ${
+              className={`p-2 sm:p-2.5 rounded-xl border md:hidden ${
                 isDark ? 'border-slate-700 bg-slate-800 text-slate-300' : 'border-slate-200 bg-slate-100 text-slate-700'
               }`}
+              aria-label="Search"
             >
-              <Search className="w-4 h-4" />
+              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
 
             {/* Theme Toggle Button */}
             <button
               onClick={onToggleDark}
-              className={`p-2.5 rounded-xl border transition hover:scale-105 ${
+              className={`p-2 sm:p-2.5 rounded-xl border transition ${
                 isDark 
                   ? 'border-slate-700 bg-slate-800 text-amber-400 hover:bg-slate-700' 
                   : 'border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
               title={isDark ? (isEn ? 'Switch to Light Mode' : 'التحويل للوضع النهاري') : (isEn ? 'Switch to Dark Mode' : 'التحويل للوضع الليلي')}
+              aria-label="Theme mode toggle"
             >
-              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {isDark ? <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
             </button>
 
             {/* Telegram Channel Button */}
@@ -283,20 +285,22 @@ export const BloggerNavbar: React.FC<Props> = ({
               href={config.telegramChannelUrl}
               target="_blank"
               rel="noreferrer"
-              className="p-2.5 rounded-xl border border-sky-500/30 bg-sky-500/10 text-sky-400 hover:bg-sky-500/20 transition"
+              className="p-2 sm:p-2.5 rounded-xl border border-sky-500/30 bg-sky-500/10 text-sky-400 hover:bg-sky-500/20 transition hidden xs:flex items-center justify-center"
               title={t('joinTelegram', config.language)}
+              aria-label="Telegram"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </a>
 
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`p-2.5 rounded-xl border lg:hidden ${
+              className={`p-2 sm:p-2.5 rounded-xl border lg:hidden ${
                 isDark ? 'border-slate-700 bg-slate-800 text-white' : 'border-slate-200 bg-slate-100 text-slate-900'
               }`}
+              aria-label="Toggle Category Menu"
             >
-              {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              {isMobileMenuOpen ? <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Menu className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
             </button>
 
           </div>
