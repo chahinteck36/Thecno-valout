@@ -573,3 +573,4 @@ export const MOCK_POSTS: TechAppPost[] = [
     viewsCount: 7900
   }
 ];
+

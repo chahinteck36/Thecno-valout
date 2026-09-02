@@ -29,6 +29,18 @@ export function generateBloggerXml(config: ThemeConfig): string {
   <title><data:blog.pageTitle/></title>
   <b:include data='blog' name='all-head-content'/>
 
+  <!-- Google tag (gtag.js) -->
+  <script async='async' src='https://www.googletagmanager.com/gtag/js?id=G-57ZHMPXDR7'></script>
+  <script>
+    //<![CDATA[
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-57ZHMPXDR7');
+    //]]>
+  </script>
+
   <!-- SEO Canonical & Meta Optimization -->
   <link expr:href='data:blog.canonicalUrl' rel='canonical'/>
   <b:if cond='data:blog.metaDescription != ""'>

@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Advertisements collection for real-time global ad management
+    match /advertisements/{adId} {
+      allow read, write: if true;
+    }
+    
+    // Global site settings & analytics
+    match /settings/{settingId} {
+      allow read, write: if true;
+    }
+    
+    // Default fallback
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

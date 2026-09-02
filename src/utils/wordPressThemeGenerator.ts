@@ -818,6 +818,15 @@ add_action('customize_register', 'technoapp_customize_register');
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="profile" href="https://gmpg.org/xfn/11">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-57ZHMPXDR7"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-57ZHMPXDR7');
+    </script>
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>

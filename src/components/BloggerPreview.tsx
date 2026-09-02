@@ -200,6 +200,16 @@ export const BloggerPreview: React.FC<Props> = ({
             </div>
           )}
 
+          {/* Optional Header Ad Placement */}
+          {config.enableAdPlacements && config.adSettings.headerBannerCode && !activeStaticPage && (
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 pt-4 text-center">
+              <div 
+                className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/40 p-2"
+                dangerouslySetInnerHTML={{ __html: config.adSettings.headerBannerCode }}
+              />
+            </div>
+          )}
+
           {/* Main Layout Area */}
           <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8 w-full flex-1">
             
@@ -224,7 +234,7 @@ export const BloggerPreview: React.FC<Props> = ({
               />
             ) : (
               /* 3. Homepage & Category Archive View */
-              <div className="space-y-6 sm:space-y-8">
+              <div className="space-y-8 sm:space-y-12">
                 
                 {/* Hero Featured Grid (Only when on home and not searching) */}
                 {!activeCategorySlug && !searchQuery && featuredPosts.length > 0 && (

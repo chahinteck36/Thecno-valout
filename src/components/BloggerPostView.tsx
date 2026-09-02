@@ -167,11 +167,15 @@ export const BloggerPostView: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Top Feature Banner / Ad Placement */}
-        {config.enableAdPlacements && (
-          <div className="bg-slate-950/80 border border-dashed border-slate-800 rounded-2xl p-3 mb-6 text-center text-xs text-slate-500 font-mono flex items-center justify-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>[ Responsive Banner Ad Area — Google AdSense 728x90 ]</span>
+        {/* Top In-Article Ad Placement */}
+        {config.enableAdPlacements && config.adSettings.inArticleTopCode && (
+          <div className={`p-4 rounded-2xl border mb-6 text-center ${
+            isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-slate-50 border-slate-200'
+          }`}>
+            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold block mb-2">
+              {t('adSpace', config.language)}
+            </span>
+            <div dangerouslySetInnerHTML={{ __html: config.adSettings.inArticleTopCode }} />
           </div>
         )}
 
@@ -287,6 +291,18 @@ export const BloggerPostView: React.FC<Props> = ({
               </table>
             </div>
           </div>
+
+          {/* Pre-Download In-Article Banner */}
+          {config.enableAdPlacements && config.adSettings.inArticleBottomCode && (
+            <div className={`p-4 rounded-2xl border mb-6 text-center ${
+              isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold block mb-2">
+                {t('adSpace', config.language)}
+              </span>
+              <div dangerouslySetInnerHTML={{ __html: config.adSettings.inArticleBottomCode }} />
+            </div>
+          )}
 
           {/* DOWNLOAD HUB BOX (With Timer) */}
           <div id="downloadHubSection" className={`p-6 sm:p-8 rounded-3xl border text-center space-y-6 ${

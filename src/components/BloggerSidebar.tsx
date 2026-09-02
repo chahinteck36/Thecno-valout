@@ -3,7 +3,7 @@ import { TechAppPost, CategoryInfo, ThemeConfig } from '../types';
 import { THEME_COLORS } from '../utils/themeStyles';
 import { t } from '../utils/translations';
 import { 
-  Send, Layers, TrendingUp, Download, Star 
+  Send, Layers, TrendingUp, Star 
 } from 'lucide-react';
 import { SidebarSlider } from './SidebarSlider';
 import { SocialFollowWidget } from './SocialFollowWidget';
@@ -31,7 +31,22 @@ export const BloggerSidebar: React.FC<Props> = ({
   return (
     <aside className="space-y-6">
       
-      {/* 1. Interactive Sidebar Slider */}
+      {/* 1. Optional Native Sidebar Ad Placement */}
+      {config.enableAdPlacements && config.adSettings.sidebarStickyCode && (
+        <div className={`rounded-2xl border p-4 text-center ${
+          isDark ? 'bg-slate-900/60 border-slate-800' : 'bg-slate-50 border-slate-200'
+        }`}>
+          <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold block mb-2">
+            {t('adSpace', config.language)}
+          </span>
+          <div 
+            className="overflow-hidden rounded-xl"
+            dangerouslySetInnerHTML={{ __html: config.adSettings.sidebarStickyCode }}
+          />
+        </div>
+      )}
+
+      {/* 2. Interactive Sidebar Slider */}
       <SidebarSlider
         posts={popularPosts}
         config={config}
@@ -39,13 +54,13 @@ export const BloggerSidebar: React.FC<Props> = ({
         onSelectPost={onSelectPost}
       />
 
-      {/* 2. Social Media Follow Box */}
+      {/* 3. Social Media Follow Box */}
       <SocialFollowWidget
         config={config}
         isDark={isDark}
       />
 
-      {/* 3. Telegram VIP Channel Widget */}
+      {/* 4. Telegram VIP Channel Widget */}
       <div 
         className="rounded-2xl p-5 text-white shadow-xl relative overflow-hidden"
         style={{
@@ -79,7 +94,7 @@ export const BloggerSidebar: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* 4. Categories Widget */}
+      {/* 5. Categories Widget */}
       <div className={`rounded-2xl border p-5 ${
         isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
       }`}>
@@ -122,7 +137,7 @@ export const BloggerSidebar: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* 5. Most Downloaded Apps Widget */}
+      {/* 6. Most Downloaded Apps Widget */}
       <div className={`rounded-2xl border p-5 ${
         isDark ? 'bg-slate-900/90 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
       }`}>
@@ -178,3 +193,4 @@ export const BloggerSidebar: React.FC<Props> = ({
     </aside>
   );
 };
+
